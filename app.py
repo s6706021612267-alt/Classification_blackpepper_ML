@@ -23,19 +23,44 @@ stl.markdown(
 	"""
 	<style>
 	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap');
-	:root { --ink: #202b24; --muted: #65736a; --leaf: #2d6948; --lime: #d7e7a2; --paper: #f5f7f1; }
+	:root { --ink: #171914; --muted: #45483f; --olive: #52652b; --olive-dark: #3d4d20; --olive-soft: #eef1e7; --line: #cbd1bf; --white: #ffffff; }
 	html, body, [class*="css"] { font-family: 'IBM Plex Sans Thai', sans-serif; color: var(--ink); }
-	.stApp { background: black, #e4edcf 0, transparent 32%), linear-gradient(135deg, #f5f7f1 0%, #edf2e8 100%); }
+	.stApp, [data-testid="stAppViewContainer"], [data-testid="stMain"] { background: #f6f7f2 !important; color: var(--ink) !important; }
+	[data-testid="stMarkdownContainer"] h1, [data-testid="stMarkdownContainer"] h2, [data-testid="stMarkdownContainer"] h3,
+	[data-testid="stHeadingWithActionElements"] h1, [data-testid="stHeadingWithActionElements"] h2, [data-testid="stHeadingWithActionElements"] h3,
+	[data-testid="stMarkdownContainer"] p, [data-testid="stCaptionContainer"] p, label { color: var(--ink) !important; }
 	.block-container { max-width: 1120px; padding-top: 3rem; padding-bottom: 3rem; }
-	.eyebrow { color: var(--leaf); font: 700 12px 'Manrope', sans-serif; letter-spacing: 1.4px; text-transform: uppercase; }
-	.hero-title { font: 800 46px 'IBM Plex Sans Thai', sans-serif; line-height: 1.16; margin: 10px 0 12px; }
-	.hero-copy { font-size: 16px; color: var(--muted); max-width: 620px; line-height: 1.8; }
+	.eyebrow { color: var(--olive-dark) !important; font: 700 12px 'Manrope', sans-serif; letter-spacing: 1.4px; text-transform: uppercase; }
+	.hero-title { color: var(--ink) !important; font: 800 46px 'IBM Plex Sans Thai', sans-serif; line-height: 1.16; margin: 10px 0 12px; }
+	.hero-copy { font-size: 16px; color: var(--muted) !important; max-width: 620px; line-height: 1.8; }
 	.panel { background: rgba(255,255,255,.82); border: 1px solid #dce5d8; border-radius: 8px; padding: 22px; }
-	.result-label { color: var(--muted); font-size: 14px; margin-bottom: 4px; }
-	.result-name { color: var(--leaf); font: 800 28px 'Manrope', 'IBM Plex Sans Thai', sans-serif; overflow-wrap: anywhere; }
-	.small-note { color: var(--muted); font-size: 13px; line-height: 1.7; }
-	[data-testid="stFileUploader"] section { background: rgba(255,255,255,.62); border: 1px dashed #8ca78e; border-radius: 8px; }
-	[data-testid="stProgressBar"] > div > div { background-color: var(--leaf); }
+	.result-label, .small-note { color: var(--muted) !important; }
+	.result-label { font-size: 14px; margin-bottom: 4px; }
+	.result-name { color: var(--olive-dark); font: 800 28px 'Manrope', 'IBM Plex Sans Thai', sans-serif; overflow-wrap: anywhere; }
+	.small-note { font-size: 13px; line-height: 1.7; }
+	[data-testid="stVerticalBlockBorderWrapper"] { background: var(--white); border-color: var(--line); border-radius: 8px; }
+	[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-diagnosis-results) { background: #171914 !important; border-color: #171914 !important; }
+	.st-key-diagnosis-results { background: #171914 !important; color: var(--white) !important; }
+	.st-key-diagnosis-results [data-testid="stMarkdownContainer"] h1,
+	.st-key-diagnosis-results [data-testid="stMarkdownContainer"] h2,
+	.st-key-diagnosis-results [data-testid="stMarkdownContainer"] h3,
+	.st-key-diagnosis-results [data-testid="stMarkdownContainer"] p,
+	.st-key-diagnosis-results [data-testid="stHeadingWithActionElements"] h3,
+	.st-key-diagnosis-results [data-testid="stMetricLabel"],
+	.st-key-diagnosis-results [data-testid="stMetricValue"],
+	.st-key-diagnosis-results [data-testid="stCaptionContainer"],
+	.st-key-diagnosis-results .result-label,
+	.st-key-diagnosis-results .result-name,
+	.st-key-diagnosis-results .small-note { color: var(--white) !important; -webkit-text-fill-color: var(--white) !important; }
+	[data-testid="stFileUploader"] section { background: var(--white); border: 1px dashed var(--olive); border-radius: 8px; }
+	[data-testid="stFileUploader"] section, [data-testid="stFileUploader"] section p { color: var(--muted) !important; }
+	[data-testid="stFileUploader"] button, [data-testid="stFileUploader"] button * { background: var(--olive-dark) !important; border-color: var(--olive-dark) !important; color: var(--white) !important; }
+	[data-testid="stFileUploader"] section button p { color: var(--white) !important; -webkit-text-fill-color: var(--white) !important; }
+	[data-testid="stFileUploader"] button svg { fill: var(--white) !important; }
+	[data-testid="stHeader"] { background: #171914 !important; }
+	[data-testid="stHeader"] button, [data-testid="stHeader"] button span, [data-testid="stHeader"] svg { color: var(--white) !important; fill: var(--white) !important; }
+	[data-testid="stProgressBar"] > div > div { background-color: var(--olive); }
+	[data-testid="stVerticalBlockBorderWrapper"]:has(.st-key-diagnosis-results) [data-testid="stProgressBar"] > div > div { background-color: var(--olive) !important; }
 	@media (max-width: 640px) { .block-container { padding: 1.5rem 1rem; } .hero-title { font-size: 34px; } .panel { padding: 16px; } }
 	</style>
 	""",
@@ -86,7 +111,7 @@ with left:
 			)
 
 with right:
-	with stl.container(border=True):
+	with stl.container(border=True, key="diagnosis-results"):
 		stl.subheader("ผลการประเมิน")
 		if uploaded_file:
 			try:
