@@ -2,13 +2,16 @@ import streamlit as stl
 from pathlib import Path
 
 import numpy as np
-import streamlit as stl
 import tensorflow as tf
 from PIL import Image, ImageOps
-from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
+from tensorflow.keras.applications.mobilenet_v2 import preprocess_input as mobilenet_v2_preprocess_input
+from tensorflow.keras.applications.mobilenet_v3 import preprocess_input as mobilenet_v3_preprocess_input
 
 
-MODEL_PATH = Path(__file__).with_name("black_pepper.keras")
+MODEL_OPTIONS = {
+	"MobileNetV2": ("black_pepper.keras", mobilenet_v2_preprocess_input),
+	"MobileNetV3Small": ("baiMobileNetV3.keras", mobilenet_v3_preprocess_input),
+}
 CLASS_NAMES = ["Footrot", "Pollu_Disease", "Slow-Decline", "leaf blight"]
 CLASS_INFO = {
 	"Footrot": "โรคเน่าคอดิน/เน่าโคน",
@@ -67,22 +70,22 @@ stl.markdown(
 	unsafe_allow_html=True,
 )
 
-
 @stl.cache_resource
-def load_model():
-	if not MODEL_PATH.is_file():
-		raise FileNotFoundError(f"ไม่พบไฟล์โมเดล: {MODEL_PATH.name}")
-	model = tf.keras.models.load_model(MODEL_PATH)
+def load_model(model_path: str):
+	path = Path(__file__).with_name(model_path)
+	if not path.is_file():
+		raise FileNotFoundError(f"ไม่พบไฟล์โมเดล: {path.name}")
+	model = tf.keras.models.load_model(path)
 	if model.output_shape[-1] != len(CLASS_NAMES):
 		raise ValueError("จำนวนผลลัพธ์ของโมเดลไม่ตรงกับจำนวนคลาสที่กำหนด")
 	return model
 
 
-def prepare_image(image: Image.Image) -> np.ndarray:
+def prepare_image(image: Image.Image, preprocess) -> np.ndarray:
 	image = ImageOps.exif_transpose(image).convert("RGB")
 	image = image.resize(IMAGE_SIZE, Image.Resampling.BILINEAR)
 	pixels = np.asarray(image, dtype=np.float32)
-	return preprocess_input(np.expand_dims(pixels, axis=0))
+	return preprocess(np.expand_dims(pixels, axis=0))
 
 
 stl.markdown('<div class="eyebrow">BLACK PEPPER · LEAF HEALTH</div>', unsafe_allow_html=True)
@@ -98,6 +101,7 @@ left, right = stl.columns([1, 1], gap="large")
 with left:
 	with stl.container(border=True):
 		stl.subheader("ภาพใบพริกไทย")
+		selected_model = stl.selectbox("Model", list(MODEL_OPTIONS))
 		uploaded_file = stl.file_uploader(
 			"เลือกภาพใบพริกไทย", type=["jpg", "jpeg", "png"], label_visibility="collapsed"
 		)
@@ -115,8 +119,9 @@ with right:
 		stl.subheader("ผลการประเมิน")
 		if uploaded_file:
 			try:
-				model = load_model()
-				probabilities = model.predict(prepare_image(image), verbose=0)[0]
+				model_file, preprocess = MODEL_OPTIONS[selected_model]
+				model = load_model(model_file)
+				probabilities = model.predict(prepare_image(image, preprocess), verbose=0)[0]
 				best_index = int(np.argmax(probabilities))
 				best_class = CLASS_NAMES[best_index]
 				stl.markdown('<div class="result-label">คลาสที่โมเดลประเมินได้สูงสุด</div>', unsafe_allow_html=True)
